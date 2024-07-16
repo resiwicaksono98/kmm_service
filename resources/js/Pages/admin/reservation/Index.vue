@@ -35,6 +35,15 @@
                     {{ item.status }}
                 </div>
             </template>
+            <template v-slot:item-assignJob="{ item }">
+                <div
+                    v-if="item.status == 'confirmed'"
+                    class="text-white bg-primary cursor-pointer p-1 rounded-lg font-semibold text-center uppercase"
+                    @click="openDialogAssignJob(item)"
+                >
+                    Assign Job
+                </div>
+            </template>
             <template v-slot:item-actions="{ item }">
                 <div class="flex gap-1">
                     <UIIcon
@@ -98,6 +107,41 @@
                 </div>
             </div>
         </div>
+        <!-- Dialog assign job -->
+        <div
+            v-if="dialogAssignJob"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        >
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-xl font-semibold mb-4">
+                    Assign Job To Mechanic
+                </h2>
+                <UISingleSelect
+                    name="status"
+                    :options="workerAvailable"
+                    placeholder="Select Mechanic"
+                    select-label="full_name"
+                    select-value="id"
+                    @update-value="onSelectMechanic"
+                    :value="selectedMechanic"
+                    v-model="selectedMechanic"
+                />
+                <div class="flex justify-end mt-4">
+                    <button
+                        class="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                        @click="dialogAssignJob = false"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class="bg-blue-500 text-white px-4 py-2 rounded"
+                        @click="assignJobHandler"
+                    >
+                        Assign
+                    </button>
+                </div>
+            </div>
+        </div>
     </AdminLayout>
 </template>
 <script setup lang="ts">
@@ -113,8 +157,10 @@ import UIConfirmDelete from "../../../Components/UI/UIConfirmDelete.vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import { toastSuccess } from "@/Composables/useToast";
 import { reactive } from "vue";
+import { router } from "@inertiajs/vue3";
 
-const props = defineProps(["reservations"]);
+const props = defineProps(["reservations", "workerAvailable"]);
+
 const page = usePage();
 
 const headers = [
@@ -122,7 +168,9 @@ const headers = [
     { text: "Book At", value: "date" },
     { text: "Session At", value: "session" },
     { text: "Package Name", value: "package.name" },
-    { text: "status", value: "status" },
+    { text: "Status", value: "status" },
+    { text: "Note", value: "note" },
+    { text: "Assign Job", value: "assignJob" },
     { text: "ACTIONS", value: "actions" },
 ];
 
@@ -187,6 +235,33 @@ function updateStatus() {
             onSuccess: () => {
                 toastSuccess(page.props.toast);
                 dialogQuickUpdateStatus.value = false;
+            },
+        }
+    );
+}
+
+const dialogAssignJob = ref(false);
+const selectedMechanic = ref("");
+
+function openDialogAssignJob(item) {
+    dialogAssignJob.value = true;
+    selectedItem.value = item;
+}
+
+function onSelectMechanic(value) {
+    selectedMechanic.value = value;
+}
+
+function assignJobHandler() {
+    router.post(
+        `/admin/assignments/${selectedItem.value?.id}/assign-job`,
+        {
+            workerId: selectedMechanic.value.id,
+        },
+        {
+            onSuccess: () => {
+                toastSuccess(page.props.toast);
+                dialogAssignJob.value = false;
             },
         }
     );

@@ -6,6 +6,7 @@ use App\Http\Resources\PackageResource;
 use App\Http\Resources\ReservationResource;
 use App\Models\Package;
 use App\Models\Reservation;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,12 +32,13 @@ class ReservationController extends Controller
             ->where('session', 'siang')
             ->whereNotIn('status', ['finished', 'rejected'])
             ->count();
+
         return Inertia::render('client/Reservation', [
             'packages' => PackageResource::collection(Package::all()),
             'availableSession' => [
                 'morning' => $morningCount >= 3 ? false : true,
                 'afternoon' => $afternoonCount >= 3 ? false : true,
-            ]
+            ],
         ]);
     }
 
@@ -46,6 +48,7 @@ class ReservationController extends Controller
             'packageId' => 'required',
             'date' => 'required',
             'session' => 'required',
+            'note' => 'nullable'
         ]);
 
         Reservation::create([
@@ -54,6 +57,7 @@ class ReservationController extends Controller
             'unique_number' => substr(md5(uniqid(mt_rand(), true)), 0, 8),
             'date' => $data['date'],
             'session' => $data['session'],
+            'note' => $data['note']
         ]);
 
         return redirect()->intended('/dashboard')->with('toast', "Reservation Berhasil Dibuat");
@@ -90,6 +94,7 @@ class ReservationController extends Controller
             'packageId' => 'required',
             'date' => 'required',
             'session' => 'required',
+            'note' => 'nullable'
         ]);
 
         $reservation->update([
@@ -97,17 +102,30 @@ class ReservationController extends Controller
             'unique_number' => substr(md5(uniqid(mt_rand(), true)), 0, 8),
             'date' => $data['date'],
             'session' => $data['session'],
+            'note' => $data['note']
         ]);
 
         return redirect()->intended('/admin/reservations')->with('toast', "Reservation Berhasil Diubah");
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $reservations = Reservation::latest()->paginate(10);
+        $data = $request->validate([
+            'date' => 'nullable|date',
+        ]);
+
+        $date = $data['date'] ?? Carbon::now()->toDateString();
+
+        $workerAvailable = User::where('role', 'worker')->whereDoesntHave('assignments', function ($query) use ($date) {
+            $query->where('status', 'assignment');
+            $query->where('date', $date);
+        })->get();
+
         return Inertia::render('admin/reservation/Index', [
             'title' => 'Reservation',
             'reservations' => ReservationResource::collection($reservations),
+            'workerAvailable' => $workerAvailable
         ]);
     }
 

@@ -10,7 +10,7 @@
         </div>
         <UIButton class="flex items-center gap-1.5" @click.prevent="logout">
             <UIIcon name="ant-design:logout-outlined" class="h-5 w-5" />
-            <span>Logout</span>
+            <span>Keluar</span>
         </UIButton>
     </header>
 </template>

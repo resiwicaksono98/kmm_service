@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,6 +14,10 @@ class DashboardController extends Controller
     {
         return Inertia::render('admin/dashboard/Index', [
             'title' => 'Dashboard',
+            'customer' => User::where('role', 'user')->count(),
+            'reservation' => Reservation::count(),
+            'reservationActive' => Reservation::where('status' ,'!=', ['finished', 'rejected'])->count(),
+            'reservationFinished' => Reservation::where('status', 'finished')->count()
         ]);
     }
 

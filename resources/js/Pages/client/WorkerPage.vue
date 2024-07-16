@@ -1,17 +1,19 @@
 <template>
     <div>
         <div class="p-4 md:mx-10">
+            <!-- Profile -->
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="bg-slate-100 border rounded-xl p-6">
                     <div class="space-y-2">
                         <h3 class="text-xl font-bold text-gray-800">
-                            Nama: John Doe
+                            Nama: {{ user?.full_name }}
                         </h3>
-                        <p class="text-gray-700">Email: johndoe@example.com</p>
-                        <p class="text-gray-700">Nomor HP: +628123456789</p>
+                        <p class="text-gray-700">Email: {{ user?.email }}</p>
+                        <p class="text-gray-700">Nomor HP: {{ user?.phone }}</p>
                     </div>
                     <button
                         class="mt-4 flex items-center justify-center bg-red hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-300"
+                        @click="logoutHandler"
                     >
                         <UIIcon name="mdi:logout" class="mr-2 h-5 w-5" />
                         Logout
@@ -24,7 +26,13 @@
                                 Statistik Pekerjaan
                             </h3>
                             <div class="text-gray-500 text-sm">
-                                20 Januari 2024
+                                {{
+                                    new Date().toLocaleDateString("id-ID", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                    })
+                                }}
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -32,7 +40,9 @@
                                 <h4 class="text-md font-semibold text-blue-800">
                                     Pekerjaan Hari Ini
                                 </h4>
-                                <p class="text-lg font-bold text-blue-900">3</p>
+                                <p class="text-lg font-bold text-blue-900">
+                                    {{ workingProgress?.today }}
+                                </p>
                             </div>
                             <div class="bg-green-100 shadow-md rounded-lg p-4">
                                 <h4
@@ -41,7 +51,7 @@
                                     Pekerjaan Selesai
                                 </h4>
                                 <p class="text-lg font-bold text-green-900">
-                                    3
+                                    {{ workingProgress?.ended }}
                                 </p>
                             </div>
                             <div class="bg-yellow-100 shadow-md rounded-lg p-4">
@@ -51,7 +61,7 @@
                                     Pekerjaan Berjalan
                                 </h4>
                                 <p class="text-lg font-bold text-yellow-900">
-                                    1
+                                    {{ workingProgress?.in_progress }}
                                 </p>
                             </div>
                         </div>
@@ -95,14 +105,14 @@
                     <div v-show="tab === 'tab1'">
                         <ul class="divide-y divide-gray-300">
                             <li
-                                v-for="(job, index) in jobDesks.sort((a, b) =>
-                                    a.status === 'Selesai' ? 1 : -1
+                                v-for="(job, index) in assignmentsToday.data.sort((a, b) =>
+                                    a.status === 'assignment' ? -1 : (a.status === 'completed' ? 1 : 0)
                                 )"
                                 :key="index"
                                 class="py-2"
                             >
                                 <div
-                                    @click="toggleDropdown(job.id)"
+                                    @click="toggleDropdown(job)"
                                     class="cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition duration-200"
                                 >
                                     <div
@@ -114,21 +124,27 @@
                                             >
                                                 <span
                                                     class="font-semibold text-lg text-blue-700"
-                                                    >#{{ job.orderId }}</span
+                                                    >#{{ job.reservation.uniqueNumber }}</span
                                                 >
                                                 <div>-</div>
                                                 <div
-                                                    :class="`font-semibold ${
-                                                        job.status === 'Selesai'
+                                                    :class="`font-semibold capitalize ${
+                                                        job.status === 'completed'
                                                             ? 'text-green-600'
-                                                            : 'text-red-600'
+                                                            : job.status === 'assignment'
+                                                            ? 'text-blue-600'
+                                                            : job.status === 'pending'
+                                                            ? 'text-yellow-600'
+                                                            : job.status === 'cancelled'
+                                                            ? 'text-gray-600'
+                                                            : 'text-red'
                                                     }`"
                                                 >
                                                     {{ job.status }}
                                                 </div>
                                             </div>
-                                            <span class="text-gray-600">{{
-                                                job.userName
+                                            <span class="text-gray-6000">{{
+                                                job.reservation.user.fullName
                                             }}</span>
                                         </div>
 
@@ -147,14 +163,14 @@
                                     >
                                         <p class="">
                                             Paket
-                                            <span class="font-"
-                                                >: {{ job.package }}</span
+                                            <span class="font-semibold"
+                                                >: {{ job.reservation.package.name }}</span
                                             >
                                         </p>
                                         <p class="my-2">Tugas :</p>
                                         <ul class="list-disc ml-6 space-y-1">
                                             <li
-                                                v-for="task in job.tasks"
+                                                v-for="task in job.reservation.package.tasks"
                                                 :key="task.id"
                                                 class="p-2 bg-white rounded-md shadow hover:bg-gray-100 transition-colors"
                                             >
@@ -166,34 +182,35 @@
                                         </ul>
                                         <div
                                             class="flex justify-end space-x-2 mt-4"
+                                            v-if="job.status != 'completed' && job.status != 'cancelled'"
                                         >
-                                            <UIButton
+                                            <div
                                                 class="bg-green-500 text-white px-4 py-2 rounded-md"
-                                                @click="markAsFinished(job.id)"
+                                                @click.prevent="markAsTask(job, 'completed')"
                                             >
                                                 <UIIcon
                                                     name="mdi:check"
                                                     class="h-5 w-5"
                                                 />
-                                            </UIButton>
-                                            <UIButton
+                                            </div>
+                                            <div
                                                 class="bg-yellow-500 text-white px-4 py-2 rounded-md"
-                                                @click="markAsPending(job.id)"
+                                                @click.prevent="markAsTask(job, 'pending')"
                                             >
                                                 <UIIcon
                                                     name="mdi:clock-outline"
                                                     class="h-5 w-5"
                                                 />
-                                            </UIButton>
-                                            <UIButton
+                                            </div>
+                                            <div
                                                 class="bg-red text-white px-4 py-2 rounded-md"
-                                                @click="markAsCancelled(job.id)"
+                                                @click.prevent="markAsTask(job, 'cancelled')"
                                             >
                                                 <UIIcon
                                                     name="mdi:close"
                                                     class="h-5 w-5"
                                                 />
-                                            </UIButton>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -203,14 +220,12 @@
                     <div v-show="tab === 'tab2'">
                         <ul class="divide-y divide-gray-300">
                             <li
-                                v-for="(job, index) in jobDesks.filter(
-                                    (job) => job.status === 'Selesai'
-                                )"
+                                v-for="(job, index) in assignments.data.filter(job => job.status !== 'assignment')"
                                 :key="index"
                                 class="py-2"
                             >
                                 <div
-                                    @click="toggleDropdown(job.id)"
+                                    @click="toggleDropdown(job)"
                                     class="cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition duration-200"
                                 >
                                     <div
@@ -222,13 +237,17 @@
                                             >
                                                 <span
                                                     class="font-semibold text-lg text-blue-700"
-                                                    >#{{ job.orderId }}</span
+                                                    >#{{ job.reservation.uniqueNumber }}</span
                                                 >
                                                 <div>-</div>
                                                 <div
                                                     class="text-gray-500 text-sm text-end"
                                                 >
-                                                    20 Januari 2024
+                                                    {{ new Date(job.date).toLocaleDateString("id-ID", {
+                                                        day: "2-digit",
+                                                        month: "long",
+                                                        year: "numeric",
+                                                    }) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -254,20 +273,21 @@
                                         </p>
                                         <p class="mt-2">
                                             Nama
-                                            <span>: {{ job.userName }}</span>
+                                            <span>: {{ job.reservation.user.fullName }}</span>
                                         </p>
                                         <p class="mt-2">
                                             Email
-                                            <span>: {{ job.userEmail }}</span>
+                                            <span>: {{ job.reservation.user.email }}</span>
                                         </p>
                                         <p class="mt-2">
                                             Paket
-                                            <span>: {{ job.package }}</span>
+                                            <span>: {{ job.reservation.package.name }}</span>
                                         </p>
                                         <p class="my-2">Tugas:</p>
+
                                         <ul class="list-disc ml-6 space-y-1">
                                             <li
-                                                v-for="task in job.tasks"
+                                                v-for="task in job.reservation.package.tasks"
                                                 :key="task.id"
                                                 class="p-2 bg-white rounded-md shadow hover:bg-gray-100 transition-colors"
                                             >
@@ -286,10 +306,33 @@
             </div>
         </div>
     </div>
+    <UIConfirmDelete
+        :message="messageDialogMarkTask"
+        :show="dialogMarkTask"
+        @confirm="changeStatus"
+        @cancel="dialogMarkTask = false"
+    />
 </template>
 <script setup>
 import UIIcon from "@/Components/UI/UIIcon.vue";
-import { ref } from "vue";
+import { usePage, router } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
+import UIConfirmDelete from "../../Components/UI/UIConfirmDelete.vue";
+import { toastSuccess, toastError } from "../../Composables/useToast";
+
+const pageProps = usePage().props;
+const user = pageProps.user;
+const workingProgress = pageProps.workingProgress;
+const assignmentsToday = pageProps.assignmentsToday;
+const assignments = pageProps.assignments;
+const {toast} = pageProps
+
+onMounted(() => {
+    if (!user && user?.role != "worker") {
+        router.visit("/worker/login", { method: "get" });
+    }
+
+});
 
 const tab = ref("tab1");
 const jobDesks = ref([
@@ -333,15 +376,43 @@ const jobDesks = ref([
     },
 ]);
 
-const toggleDropdown = (jobId) => {
-    const job = jobDesks.value.find((j) => j.id === jobId);
-    if (job) {
-        job.isDropdownOpen = !job.isDropdownOpen;
-    }
+
+const toggleDropdown = (job) => {
+    job.isDropdownOpen = !job.isDropdownOpen
 };
 
 jobDesks.value.forEach((job) => {
     job.isDropdownOpen = false;
 });
+
+function logoutHandler() {
+    router.visit("worker/logout", { method: "post" });
+}
+
+const dialogMarkTask = ref(false)
+const messageDialogMarkTask = ref('')
+const selectedJob = ref()
+const jobType = ref()
+
+function markAsTask(job, type) {
+    dialogMarkTask.value = true
+    messageDialogMarkTask.value = 'Apakah anda yakin ingin mengubah status tugas ini menjadi ' + type + '?'
+    job.isDropdownOpen = false
+    jobType.value = type
+    selectedJob.value = job
+}
+
+function changeStatus() {
+    router.visit(`worker/${selectedJob.value.id}/update-status`, {
+        method: 'post',
+        data: {
+            status: jobType.value
+        },
+        onSuccess: (data) => {
+            toastSuccess(data.props.toast);
+        }
+    })
+}
+
 </script>
 <style lang=""></style>

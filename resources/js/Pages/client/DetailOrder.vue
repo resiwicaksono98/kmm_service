@@ -59,8 +59,12 @@
                         }}</span>
                     </div>
                     <div class="text-base text-gray-900 mb-3">
-                        Nama Mekanik:
-                        <span class="font-semibold">Jepri Nikol</span>
+                        Estimasi Waktu :
+                        <span class="font-semibold">{{ reservation.data?.package.estimatedTime }} Menit</span>
+                    </div>
+                    <div class="text-base text-gray-900 mb-3">
+                        Nama Mekanik :
+                        <span class="font-semibold">{{ reservation.data?.workerName }}</span>
                     </div>
                     <div class="flex gap-2">
                         <div>Status :</div>

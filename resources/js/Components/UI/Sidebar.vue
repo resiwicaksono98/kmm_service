@@ -16,7 +16,7 @@
                 :class="{ 'bg-secondary': url.startsWith('/admin/users') }"
             >
                 <UIIcon name="tabler:users" class="h-6 w-6" />
-                <div>Users</div>
+                <div>Pengguna</div>
             </UILink>
             <UILink
                 to="/admin/tasks"
@@ -24,7 +24,7 @@
                 :class="{ 'bg-secondary': url.startsWith('/admin/tasks') }"
             >
                 <UIIcon name="mdi:calendar-task" class="h-6 w-6" />
-                <div>Tasks</div>
+                <div>Tugas</div>
             </UILink>
             <UILink
                 to="/admin/packages"
@@ -32,7 +32,7 @@
                 :class="{ 'bg-secondary': url.startsWith('/admin/packages') }"
             >
                 <UIIcon name="tabler:clipboard-data" class="h-6 w-6" />
-                <div>Package</div>
+                <div>Paket</div>
             </UILink>
             <UILink
                 to="/admin/reservations"
@@ -40,7 +40,7 @@
                 :class="{ 'bg-secondary': url.startsWith('/admin/reservations') }"
             >
                 <UIIcon name="tabler:calendar" class="h-6 w-6" />
-                <div>Reservations</div>
+                <div>Reservasi</div>
             </UILink>
             <UILink
                 to="/admin/schedules"
@@ -48,15 +48,7 @@
                 :class="{ 'bg-secondary': url.startsWith('/admin/schedules') }"
             >
                 <UIIcon name="tabler:checklist" class="h-6 w-6" />
-                <div>Schedules</div>
-            </UILink>
-            <UILink
-                to="/admin/reports"
-                class="flex items-center gap-2"
-                :class="{ 'bg-secondary': url.startsWith('/admin/reports') }"
-            >
-                <UIIcon name="tabler:file-report" class="h-6 w-6" />
-                <div>Reports</div>
+                <div>Penjadwalan</div>
             </UILink>
         </ul>
     </div>

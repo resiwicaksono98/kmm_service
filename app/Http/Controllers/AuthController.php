@@ -89,4 +89,34 @@ class AuthController extends Controller
 
         return redirect()->back()->with('message', 'Email atau password salah');
     }
+
+    public function workerLoginPage()
+    {
+        return Inertia::render('client/LoginWorker');
+    }
+
+    public function workerLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $user = auth()->user();
+
+            if ($user->role != 'worker') {
+                return redirect()->back()->with('message', 'Akses Ditolak');
+            }
+            return redirect()->intended('/worker')->with('toast', "Login Berhasil");
+        }
+
+        return redirect()->back()->with('message', 'Email atau password salah');
+    }
+
+    public function workerLogout()
+    {
+        Auth::logout();
+        return redirect('/worker/login')->with('toast', 'Logout Berhasil');
+    }
 }

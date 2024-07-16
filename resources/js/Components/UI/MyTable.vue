@@ -25,6 +25,14 @@
             <template v-slot:item-image="item">
                 <slot name="item-image" :item="item"></slot>
             </template>
+            <template v-slot:item-assignJob="item">
+                <slot name="item-assignJob" :item="item"></slot>
+            </template>
+            <template v-slot:item-note="item">
+                <slot name="item-note" :item="item">
+                    <div class="max-w-sm">{{ item.note }}</div>
+                </slot>
+            </template>
             <template v-slot:item-actions="item">
                 <slot name="item-actions" :item="item"></slot>
             </template>

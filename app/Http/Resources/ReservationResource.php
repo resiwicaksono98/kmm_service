@@ -23,6 +23,8 @@ class ReservationResource extends JsonResource
             'status' => $this->resource->status,
             'package' => new PackageResource($this->resource->package),
             'user' => new UserResource($this->resource->user),
+            'workerName' => $this->resource->assignment->worker->full_name ?? null,
+            'note' => $this->resource->note,
             'createdAt' => Carbon::parse($this->resource->created_at)->timezone('Asia/Jakarta')->toDateTimeString(),
         ];
     }

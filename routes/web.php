@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
@@ -11,6 +12,8 @@ use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\CheckUserLogin;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+use function Pest\Laravel\get;
 
 Route::get('/', function () {
     return Inertia::render('client/Home');
@@ -84,11 +87,24 @@ Route::prefix('admin')->group(function () {
             Route::post('{reservation}/edit', [ReservationController::class, 'edit']);
             Route::delete('{reservation}', [ReservationController::class, 'delete']);
         });
+
+        Route::prefix('assignments')->group(function() {
+            Route::post('{reservation}/assign-job', [AssignmentController::class, 'assignJob']);
+            Route::delete('{assignment}', [AssignmentController::class, 'delete']);
+        });
+
+        Route::prefix('schedules')->group(function() {
+            Route::get('', [AssignmentController::class, 'index']);
+        });
     });
 
 });
 
 // Worker
 Route::prefix('worker')->group(function() {
+    Route::get('login', [AuthController::class, 'workerLoginPage']);
+    Route::post('login', [AuthController::class, 'workerLogin']);
+    Route::post('logout', [AuthController::class, 'workerLogout']);
     Route::get('', [WorkerController::class, 'index']);
+    Route::post('{assignment}/update-status', [WorkerController::class, 'updateStatus']);
 });

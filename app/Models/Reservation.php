@@ -24,4 +24,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Package::class, 'package_id', 'id');
     }
+
+    public function assignment()
+    {
+        return $this->hasOne(Assignment::class, 'reservation_id', 'id');
+    }
 }
