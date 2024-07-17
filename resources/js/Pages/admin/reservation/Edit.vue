@@ -30,7 +30,7 @@
                         mode="date"
                         :min-date="
                             new Date(
-                                new Date().setDate(new Date().getDate() + 1)
+                                new Date().setDate(new Date().getDate())
                             )
                         "
                         :max-date="
