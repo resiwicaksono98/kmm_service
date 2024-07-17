@@ -17,6 +17,7 @@ class Task extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'icon' => 'string',
         'created_at' => 'datetime:Asia/Jakarta',
         'updated_at' => 'datetime:Asia/Jakarta',
         'deleted_at' => 'datetime:Asia/Jakarta',

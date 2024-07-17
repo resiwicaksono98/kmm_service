@@ -58,6 +58,7 @@ class TaskController extends Controller
     {
         $data = $request->validated();
 
+
         if ($request->hasFile('icon')) {
             if ($task->icon) {
                 Storage::disk('public')->delete($task->icon);
@@ -66,9 +67,10 @@ class TaskController extends Controller
             $data['icon'] = $path;
         }
 
+
         $task->update([
             'name' => $data['name'],
-            'icon' => $data['icon'],
+            'icon' => isset($data['icon']) ? str_replace('http://localhost:8000/storage', '', $data['icon']) : $task['icon'],
             'duration_of_work' => $data['durationOfWork'],
         ]);
         return redirect()->intended('/admin/tasks')->with('toast', "Task Berhasil Diubah");

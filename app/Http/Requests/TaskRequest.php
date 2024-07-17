@@ -15,10 +15,7 @@ class TaskRequest extends FormRequest
                 'max:255',
             ],
             'icon' => [
-                'required',
-                'image',
-                'mimes:jpeg,png,jpg,gif,svg',
-                'max:2048',
+                'nullable',
             ],
             'durationOfWork' => [
                 'required',

@@ -25,7 +25,8 @@ class WorkerController extends Controller
         return Inertia::render('client/WorkerPage', [
             'workingProgress' => [
                 'today' =>  $assignments->where('date', Carbon::now()->format('Y-m-d'))->count(),
-                'ended' => $assignments->where('status', 'completed')->count(),
+                'ended' => $assignments->where('status', 'completed')
+                ->count(),
                 'in_progress' => $assignments->whereIn('status', ['assignment', 'pending'])->where('date', Carbon::now()->format('Y-m-d'))->count(),
             ],
             'assignmentsToday' => AssignmentResource::collection($assignmentsToday),

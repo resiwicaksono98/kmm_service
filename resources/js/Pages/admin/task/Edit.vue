@@ -82,7 +82,7 @@ const previewImage = (event) => {
 
 const form = useForm({
     name: task.data.name || '',
-    icon: task.data.icon || '',
+    icon: task.data.icon,
     durationOfWork: task.data.durationOfWork || '',
 });
 

@@ -94,7 +94,7 @@ class PackageController extends Controller
             'name' => $data['name'],
             'estimated_time' => $totalDuration,
             'description' => $data['description'],
-            'image' =>  $data['image'] ?? $package->image,
+            'image' =>  isset($data['image']) ? str_replace('http://localhost:8000/storage', '', $data['image']) : $package['image'],
         ]);
 
         $package->tasks()->sync($data['tasks']);

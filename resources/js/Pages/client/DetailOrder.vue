@@ -29,31 +29,31 @@
                     <div class="text-base text-gray-900 mb-3">
                         Atas Nama:
                         <span class="font-semibold">{{
-                            reservation.data.user.fullName
+                            reservation?.data?.user?.fullName
                         }}</span>
                     </div>
                     <div class="text-base text-gray-900 mb-3">
                         Nomor Handphone:
                         <span class="font-semibold">{{
-                            reservation.data.user.phone
+                            reservation?.data?.user?.phone
                         }}</span>
                     </div>
                     <div class="text-base text-gray-900 mb-3">
                         Alamat :
                         <span class="font-semibold">{{
-                            reservation.data.user.address
+                            reservation?.data?.user?.address
                         }}</span>
                     </div>
                     <div class="text-base text-gray-900 mb-3">
                         Paket:
                         <span class="font-semibold">{{
-                            reservation.data.package.name
+                            reservation?.data?.package?.name
                         }}</span>
                     </div>
                     <div class="text-base text-gray-900 mb-3">
                         Sesi:
                         <span class="font-semibold">{{
-                            reservation.data.session == "pagi"
+                            reservation?.data?.session == "pagi"
                                 ? "Pagi (09:00 - 11:00)"
                                 : "Siang (12:00 - 02:00)"
                         }}</span>
@@ -64,7 +64,7 @@
                     </div>
                     <div class="text-base text-gray-900 mb-3">
                         Nama Mekanik :
-                        <span class="font-semibold">{{ reservation.data?.workerName }}</span>
+                        <span class="font-semibold">{{ reservation?.data?.workerName }}</span>
                     </div>
                     <div class="flex gap-2">
                         <div>Status :</div>
@@ -101,13 +101,13 @@
                         Detail Layanan:
                     </div>
                     <ul
-                        v-for="service in reservation.data.package.tasks"
+                        v-for="service in reservation?.data?.package?.tasks"
                         class="list-disc list-inside text-base text-gray-900 font-semibold"
                     >
                         <li>{{ service.name }}</li>
                     </ul>
                     <div
-                        v-if="reservation.data.status === 'pending'"
+                        v-if="reservation?.data?.status === 'pending'"
                         class="mt-4 cursor-pointer"
                     >
                         <button
