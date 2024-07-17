@@ -70,7 +70,11 @@
             </div>
             <div class="bg-white border rounded-lg md:mt-8 p-4">
                 <div class="text-gray-500 text-sm text-end">
-                    20 Januari 2024
+                    {{ new Date().toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                    }) }}
                 </div>
                 <div class="border-b">
                     <ul class="flex flex-wrap">
