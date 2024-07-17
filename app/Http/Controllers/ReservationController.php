@@ -108,9 +108,10 @@ class ReservationController extends Controller
         return redirect()->intended('/admin/reservations')->with('toast', "Reservation Berhasil Diubah");
     }
 
-    public function index(Request $request)
+    public function index(Request $request, )
     {
-        $reservations = Reservation::latest()->paginate(10);
+        $reservations = Reservation::query();
+        $reservations = $reservations->latest()->paginate(10);
         $data = $request->validate([
             'date' => 'nullable|date',
         ]);
@@ -132,6 +133,7 @@ class ReservationController extends Controller
     public function delete(Reservation $reservation)
     {
         $reservation->delete();
+        $reservation->assignment()->delete();
         return redirect()->intended('/admin/reservations')->with('toast', "Reservation Berhasil Dihapus");
     }
 

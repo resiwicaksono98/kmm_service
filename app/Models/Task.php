@@ -16,6 +16,12 @@ class Task extends Model
     protected $primaryKey = 'id';
     protected $guarded = [];
 
+    protected $casts = [
+        'created_at' => 'datetime:Asia/Jakarta',
+        'updated_at' => 'datetime:Asia/Jakarta',
+        'deleted_at' => 'datetime:Asia/Jakarta',
+    ];
+
     public function packages(): BelongsToMany
     {
         return $this->belongsToMany(Package::class, 'package_tasks', 'task_id', 'package_id');

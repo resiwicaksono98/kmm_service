@@ -15,6 +15,20 @@ class Reservation extends Model
     protected $primaryKey = 'id';
     protected $guarded = [];
 
+    protected $casts = [
+        'deleted_at' => 'datetime:Asia/Jakarta',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->created_at = $model->date;
+            $model->updated_at = $model->date;
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

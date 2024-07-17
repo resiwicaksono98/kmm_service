@@ -16,6 +16,12 @@ class Assignment extends Model
     protected $primaryKey = 'id';
     protected $guarded = [];
 
+    protected $casts = [
+        'created_at' => 'datetime:Asia/Jakarta',
+        'updated_at' => 'datetime:Asia/Jakarta',
+        'deleted_at' => 'datetime:Asia/Jakarta',
+    ];
+
     public function reservation() : BelongsTo
     {
         return $this->belongsTo(Reservation::class, 'reservation_id', 'id');

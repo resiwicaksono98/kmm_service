@@ -15,7 +15,23 @@
                 @update-value="handleFilter"
                 :value="filterOptions.status"
             />
+            <div class="flex items-center">
+                <input
+                    id="today"
+                    type="checkbox"
+                    name="dateFilter"
+                    v-model="filterToday"
+                    class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                />
+                <label
+                    for="today"
+                    class="ml-2 block text-sm leading-5 text-gray-700"
+                >
+                    Hari Ini
+                </label>
+            </div>
         </div>
+
         <MyTable
             :headers="headers"
             :items="reservations.data"
@@ -158,6 +174,7 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { toastSuccess } from "@/Composables/useToast";
 import { reactive } from "vue";
 import { router } from "@inertiajs/vue3";
+import { watch } from "vue";
 
 const props = defineProps(["reservations", "workerAvailable"]);
 
@@ -176,6 +193,7 @@ const headers = [
 
 const filterOptions = reactive({
     status: "",
+    search: "",
 });
 
 function handleFilter(value) {
@@ -187,6 +205,16 @@ function handleFilter(value) {
         filterOptions.status = value;
     }
 }
+
+const filterToday = ref(false);
+
+watch(filterToday, () => {
+    if (filterToday.value) {
+        filterOptions.search = new Date().toISOString().split("T")[0]
+    } else {
+        filterOptions.search = "";
+    }
+});
 
 const dialogDeleteConfirm = ref(false);
 const selectedItem = ref(null);

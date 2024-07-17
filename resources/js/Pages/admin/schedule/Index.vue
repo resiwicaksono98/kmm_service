@@ -68,12 +68,12 @@
                     >
                         Cancel
                     </button>
-                    <butto
+                    <button
                         class="bg-blue-500 text-white px-4 py-2 rounded"
                         @click="assignJobHandler"
                     >
                         Assign
-                    </butto>
+                    </button>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@ import { reactive } from "vue";
 
 const props = defineProps(["assignments", "workerAvailable"]);
 const page = usePage();
-console.log(props.assignments);
+
 const headers = [
     { text: "Tanggal", value: "date" },
     { text: "Nama Customer", value: "reservation.user.fullName" },
