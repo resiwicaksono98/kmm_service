@@ -63,7 +63,7 @@ const headers = [
 ];
 
 function excelDownloadHandle(item){
-    window.open(item., '_blank');
+    window.open(item.fileUrl, '_blank');
 }
 
 const dialogDeleteConfirm = ref(false);
