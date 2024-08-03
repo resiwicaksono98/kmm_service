@@ -50,6 +50,14 @@
                 <UIIcon name="tabler:checklist" class="h-6 w-6" />
                 <div>Penjadwalan</div>
             </UILink>
+            <UILink
+                to="/admin/reports"
+                class="flex items-center gap-2"
+                :class="{ 'bg-secondary': url.startsWith('/admin/reports') }"
+            >
+                <UIIcon name="tabler:note" class="h-6 w-6" />
+                <div>Laporan</div>
+            </UILink>
         </ul>
     </div>
 </template>

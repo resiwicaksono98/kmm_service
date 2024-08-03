@@ -4,6 +4,7 @@ use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -95,6 +96,13 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('schedules')->group(function() {
             Route::get('', [AssignmentController::class, 'index']);
+        });
+
+        Route::prefix('reports')->group(function() {
+            Route::get('', [ReportController::class, 'index']);
+            Route::get('create', [ReportController::class, 'createPage']);
+            Route::post('create', [ReportController::class, 'create']);
+            Route::delete('{report}', [ReportController::class, 'delete']);
         });
     });
 

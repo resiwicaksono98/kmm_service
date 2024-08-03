@@ -5,7 +5,7 @@
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="bg-slate-100 border rounded-xl p-6">
                     <div class="space-y-2">
-                        <h3 class="text-xl font-bold text-gray-800">
+                        <h3 class="text-xl font-bold text-gray-800 username">
                             Nama: {{ user?.full_name }}
                         </h3>
                         <p class="text-gray-700">Email: {{ user?.email }}</p>
@@ -70,11 +70,13 @@
             </div>
             <div class="bg-white border rounded-lg md:mt-8 p-4">
                 <div class="text-gray-500 text-sm text-end">
-                    {{ new Date().toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                    }) }}
+                    {{
+                        new Date().toLocaleDateString("id-ID", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                        })
+                    }}
                 </div>
                 <div class="border-b">
                     <ul class="flex flex-wrap">
@@ -109,8 +111,14 @@
                     <div v-show="tab === 'tab1'">
                         <ul class="divide-y divide-gray-300">
                             <li
-                                v-for="(job, index) in assignmentsToday.data.sort((a, b) =>
-                                    a.status === 'assignment' ? -1 : (a.status === 'completed' ? 1 : 0)
+                                v-for="(
+                                    job, index
+                                ) in assignmentsToday.data.sort((a, b) =>
+                                    a.status === 'assignment'
+                                        ? -1
+                                        : a.status === 'completed'
+                                        ? 1
+                                        : 0
                                 )"
                                 :key="index"
                                 class="py-2"
@@ -128,18 +136,25 @@
                                             >
                                                 <span
                                                     class="font-semibold text-lg text-blue-700"
-                                                    >#{{ job.reservation.uniqueNumber }}</span
+                                                    >#{{
+                                                        job.reservation
+                                                            .uniqueNumber
+                                                    }}</span
                                                 >
                                                 <div>-</div>
                                                 <div
                                                     :class="`font-semibold capitalize ${
-                                                        job.status === 'completed'
+                                                        job.status ===
+                                                        'completed'
                                                             ? 'text-green-600'
-                                                            : job.status === 'assignment'
+                                                            : job.status ===
+                                                              'assignment'
                                                             ? 'text-blue-600'
-                                                            : job.status === 'pending'
+                                                            : job.status ===
+                                                              'pending'
                                                             ? 'text-yellow-600'
-                                                            : job.status === 'cancelled'
+                                                            : job.status ===
+                                                              'cancelled'
                                                             ? 'text-gray-600'
                                                             : 'text-red'
                                                     }`"
@@ -168,13 +183,17 @@
                                         <p class="">
                                             Paket
                                             <span class="font-semibold"
-                                                >: {{ job.reservation.package.name }}</span
+                                                >:
+                                                {{
+                                                    job.reservation.package.name
+                                                }}</span
                                             >
                                         </p>
                                         <p class="my-2">Tugas :</p>
                                         <ul class="list-disc ml-6 space-y-1">
                                             <li
-                                                v-for="task in job.reservation.package.tasks"
+                                                v-for="task in job.reservation
+                                                    .package.tasks"
                                                 :key="task.id"
                                                 class="p-2 bg-white rounded-md shadow hover:bg-gray-100 transition-colors"
                                             >
@@ -184,13 +203,25 @@
                                                 >
                                             </li>
                                         </ul>
+                                        <p class="my-2">
+                                            Catatan :
+                                            <br>
+                                            <span class="font-light text-sm">
+                                                {{ job.reservation.note }}</span
+                                            >
+                                        </p>
                                         <div
                                             class="flex justify-end space-x-2 mt-4"
-                                            v-if="job.status != 'completed' && job.status != 'cancelled'"
+                                            v-if="
+                                                job.status != 'completed' &&
+                                                job.status != 'cancelled'
+                                            "
                                         >
                                             <div
                                                 class="bg-green-500 text-white px-4 py-2 rounded-md"
-                                                @click.prevent="markAsTask(job, 'completed')"
+                                                @click.prevent="
+                                                    markAsTask(job, 'completed')
+                                                "
                                             >
                                                 <UIIcon
                                                     name="mdi:check"
@@ -199,7 +230,9 @@
                                             </div>
                                             <div
                                                 class="bg-yellow-500 text-white px-4 py-2 rounded-md"
-                                                @click.prevent="markAsTask(job, 'pending')"
+                                                @click.prevent="
+                                                    markAsTask(job, 'pending')
+                                                "
                                             >
                                                 <UIIcon
                                                     name="mdi:clock-outline"
@@ -208,7 +241,9 @@
                                             </div>
                                             <div
                                                 class="bg-red text-white px-4 py-2 rounded-md"
-                                                @click.prevent="markAsTask(job, 'cancelled')"
+                                                @click.prevent="
+                                                    markAsTask(job, 'cancelled')
+                                                "
                                             >
                                                 <UIIcon
                                                     name="mdi:close"
@@ -224,7 +259,9 @@
                     <div v-show="tab === 'tab2'">
                         <ul class="divide-y divide-gray-300">
                             <li
-                                v-for="(job, index) in assignments.data.filter(job => job.status !== 'assignment')"
+                                v-for="(job, index) in assignments.data.filter(
+                                    (job) => job.status !== 'assignment'
+                                )"
                                 :key="index"
                                 class="py-2"
                             >
@@ -241,17 +278,27 @@
                                             >
                                                 <span
                                                     class="font-semibold text-lg text-blue-700"
-                                                    >#{{ job.reservation.uniqueNumber }}</span
+                                                    >#{{
+                                                        job.reservation
+                                                            .uniqueNumber
+                                                    }}</span
                                                 >
                                                 <div>-</div>
                                                 <div
                                                     class="text-gray-500 text-sm text-end"
                                                 >
-                                                    {{ new Date(job.date).toLocaleDateString("id-ID", {
-                                                        day: "2-digit",
-                                                        month: "long",
-                                                        year: "numeric",
-                                                    }) }}
+                                                    {{
+                                                        new Date(
+                                                            job.date
+                                                        ).toLocaleDateString(
+                                                            "id-ID",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "long",
+                                                                year: "numeric",
+                                                            }
+                                                        )
+                                                    }}
                                                 </div>
                                             </div>
                                         </div>
@@ -277,21 +324,38 @@
                                         </p>
                                         <p class="mt-2">
                                             Nama
-                                            <span>: {{ job.reservation.user.fullName }}</span>
+                                            <span
+                                                >:
+                                                {{
+                                                    job.reservation.user
+                                                        .fullName
+                                                }}</span
+                                            >
                                         </p>
                                         <p class="mt-2">
                                             Email
-                                            <span>: {{ job.reservation.user.email }}</span>
+                                            <span
+                                                >:
+                                                {{
+                                                    job.reservation.user.email
+                                                }}</span
+                                            >
                                         </p>
                                         <p class="mt-2">
                                             Paket
-                                            <span>: {{ job.reservation.package.name }}</span>
+                                            <span
+                                                >:
+                                                {{
+                                                    job.reservation.package.name
+                                                }}</span
+                                            >
                                         </p>
                                         <p class="my-2">Tugas:</p>
 
                                         <ul class="list-disc ml-6 space-y-1">
                                             <li
-                                                v-for="task in job.reservation.package.tasks"
+                                                v-for="task in job.reservation
+                                                    .package.tasks"
                                                 :key="task.id"
                                                 class="p-2 bg-white rounded-md shadow hover:bg-gray-100 transition-colors"
                                             >
@@ -329,13 +393,12 @@ const user = pageProps.user;
 const workingProgress = pageProps.workingProgress;
 const assignmentsToday = pageProps.assignmentsToday;
 const assignments = pageProps.assignments;
-const {toast} = pageProps
+const { toast } = pageProps;
 
 onMounted(() => {
     if (!user && user?.role != "worker") {
         router.visit("/worker/login", { method: "get" });
     }
-
 });
 
 const tab = ref("tab1");
@@ -380,9 +443,8 @@ const jobDesks = ref([
     },
 ]);
 
-
 const toggleDropdown = (job) => {
-    job.isDropdownOpen = !job.isDropdownOpen
+    job.isDropdownOpen = !job.isDropdownOpen;
 };
 
 jobDesks.value.forEach((job) => {
@@ -393,30 +455,32 @@ function logoutHandler() {
     router.visit("worker/logout", { method: "post" });
 }
 
-const dialogMarkTask = ref(false)
-const messageDialogMarkTask = ref('')
-const selectedJob = ref()
-const jobType = ref()
+const dialogMarkTask = ref(false);
+const messageDialogMarkTask = ref("");
+const selectedJob = ref();
+const jobType = ref();
 
 function markAsTask(job, type) {
-    dialogMarkTask.value = true
-    messageDialogMarkTask.value = 'Apakah anda yakin ingin mengubah status tugas ini menjadi ' + type + '?'
-    job.isDropdownOpen = false
-    jobType.value = type
-    selectedJob.value = job
+    dialogMarkTask.value = true;
+    messageDialogMarkTask.value =
+        "Apakah anda yakin ingin mengubah status tugas ini menjadi " +
+        type +
+        "?";
+    job.isDropdownOpen = false;
+    jobType.value = type;
+    selectedJob.value = job;
 }
 
 function changeStatus() {
     router.visit(`worker/${selectedJob.value.id}/update-status`, {
-        method: 'post',
+        method: "post",
         data: {
-            status: jobType.value
+            status: jobType.value,
         },
         onSuccess: (data) => {
             toastSuccess(data.props.toast);
-        }
-    })
+        },
+    });
 }
-
 </script>
-<style lang=""></style>
+<style scoped></style>

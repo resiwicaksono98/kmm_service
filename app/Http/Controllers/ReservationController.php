@@ -94,7 +94,8 @@ class ReservationController extends Controller
             'packageId' => 'required',
             'date' => 'required',
             'session' => 'required',
-            'note' => 'nullable'
+            'note' => 'nullable',
+            'status' => 'required'
         ]);
 
         $reservation->update([
@@ -102,7 +103,8 @@ class ReservationController extends Controller
             'unique_number' => substr(md5(uniqid(mt_rand(), true)), 0, 8),
             'date' => $data['date'],
             'session' => $data['session'],
-            'note' => $data['note'] ?? $reservation->note
+            'note' => $data['note'] ?? $reservation->note,
+            'status' => $data['status']
         ]);
 
         return redirect()->intended('/admin/reservations')->with('toast', "Reservation Berhasil Diubah");
